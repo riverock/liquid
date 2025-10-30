@@ -95,10 +95,13 @@ module Liquid
       obj = render(context)
 
       if obj.is_a?(Array)
-        output << obj.join
+        output.to_s + obj.join
       elsif obj.nil?
       else
-        output << obj.to_s
+        obj = obj.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+        output_str = output.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+
+        output_str + obj
       end
 
       output
