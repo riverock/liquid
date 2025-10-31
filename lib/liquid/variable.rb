@@ -94,14 +94,19 @@ module Liquid
     def render_to_output_buffer(context, output)
       obj = render(context)
 
+
+      # This is to find spots where nil is being cast to "", which is a frozen string literal
+      # in the exact case of nil.to_s, and isn't mutable N.B.
+      if output.frozen?
+        raise LiquidError, "Cannot mutate frozen output buffer"
+      end
+
       if obj.is_a?(Array)
-        output.to_s + obj.join
+        output << obj.join
       elsif obj.nil?
       else
-        obj = obj.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
-        output_str = output.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
-
-        output_str + obj
+        obj_encoded = obj.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+        output << obj_encoded
       end
 
       output
