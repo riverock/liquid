@@ -127,7 +127,9 @@ module Liquid
 
         case node
         when String
-          output << node
+          output.force_encoding('UTF-8') if output.encoding != Encoding::UTF_8
+          node_utf8 = node.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+          output << node_utf8
         when Variable
           render_node(context, output, node)
         when Block

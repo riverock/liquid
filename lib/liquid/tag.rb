@@ -58,7 +58,12 @@ module Liquid
     # of the `render_to_output_buffer` method will become the default and the `render`
     # method will be removed.
     def render_to_output_buffer(context, output)
-      output << render(context)
+      rendered = render(context)
+      if output.nil?
+        output = rendered.to_s
+      else
+        output << rendered.to_s
+      end
       output
     end
 
