@@ -102,13 +102,16 @@ module Liquid
 
       if obj.is_a?(Array)
         output << obj.join
+      elsif obj.kind_of?(Hash)
+        output << obj.to_s
       elsif obj.nil?
         # do nothing
-      else
-        obj_encoded = obj.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
-        # Force output to UTF-8 encoding to match obj_encoded
+      elsif obj.kind_of?(String)
         output.force_encoding('UTF-8') if output.encoding != Encoding::UTF_8
+        obj_encoded = obj.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
         output << obj_encoded
+      else
+        output << obj.try(:to_s) || ""
       end
 
       output
