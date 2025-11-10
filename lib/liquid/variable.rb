@@ -107,9 +107,6 @@ module Liquid
       elsif obj.nil?
         # do nothing
       elsif obj.kind_of?(String)
-        # output.force_encoding('UTF-8') if output.encoding != Encoding::UTF_8
-        # obj_encoded = obj.force_encoding('UTF-8') if obj.encoding != Encoding::UTF_8
-        # output << obj_encoded
         output << obj
       else
         output << obj.try(:to_s) || ""
