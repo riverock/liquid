@@ -113,6 +113,12 @@ module Liquid
       end
 
       output
+    rescue Encoding::CompatibilityError => e
+      if obj.kind_of?(String)
+        output.force_encoding('UTF-8') << obj
+      else
+        raise e
+      end
     end
 
     def disabled?(_context)
