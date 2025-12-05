@@ -94,14 +94,31 @@ module Liquid
     def render_to_output_buffer(context, output)
       obj = render(context)
 
+      if output.nil?
+        output = +''
+      elsif output.frozen?
+        raise LiquidError, "Cannot mutate frozen output buffer"
+      end
+
       if obj.is_a?(Array)
         output << obj.join
-      elsif obj.nil?
-      else
+      elsif obj.kind_of?(Hash)
         output << obj.to_s
+      elsif obj.nil?
+        # do nothing
+      elsif obj.kind_of?(String)
+        output << obj
+      else
+        output << obj.try(:to_s) || ""
       end
 
       output
+    rescue Encoding::CompatibilityError => e
+      if obj.kind_of?(String)
+        output.force_encoding('UTF-8') << obj
+      else
+        raise e
+      end
     end
 
     def disabled?(_context)
